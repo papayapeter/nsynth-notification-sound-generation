@@ -1,0 +1,8 @@
+name: nsynth
+dependencies:
+  - python=3.8
+  - pip
+  - yapf>=0.30
+  - ipykernel>=6.9.1
+  - pip:
+      - magenta==2.1.3
