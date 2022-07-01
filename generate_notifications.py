@@ -57,6 +57,7 @@ def generate(sample_rate: int, length: float, batch_size: int, executions: int,
              in_dir: str, out_dir: str, deviation: List[float]) -> None:
     sample_length = int(sample_rate * length)
 
+    print('LOADING AUDIO')
     # load audio files into numpy arrays
     audios = []
     for path in glob.glob(os.path.join(in_dir, '*.wav')):
@@ -69,6 +70,7 @@ def generate(sample_rate: int, length: float, batch_size: int, executions: int,
         )
         audios.append(audio)
 
+    print('ENCODING AUDIO')
     # encode
     encodings = [
         fastgen.encode(
@@ -77,9 +79,11 @@ def generate(sample_rate: int, length: float, batch_size: int, executions: int,
     ]
 
     for execution_count, _ in enumerate(range(executions)):
+        print(f'EXECUTING BATCH {execution_count}')
         # fuse encodings randomly
         fused_encodings_list = []
-        for _ in range(batch_size):
+        for count, _ in enumerate(range(batch_size)):
+            print(f'FUSING ENCODING {count}')
             # shuffle the list in the beginning
             random.shuffle(encodings)
 
@@ -122,6 +126,7 @@ def generate(sample_rate: int, length: float, batch_size: int, executions: int,
             for i in range(fused_encodings.shape[0])
         ]
 
+        print('SYNTHESISING FUSED ENCODINGS')
         # generate batchwise
         fastgen.synthesize(fused_encodings,
                            save_paths=save_paths,
@@ -129,6 +134,7 @@ def generate(sample_rate: int, length: float, batch_size: int, executions: int,
                                'models', 'wavenet-ckpt', 'model.ckpt-200000'),
                            samples_per_save=sample_length)
 
+        print('STRETCHING AND CONVERTING FUSED ENCODINGS TO MP3')
         # reopen the wav files, stretch them & save them as mp3s
         for path in save_paths:
             speed_change(AudioSegment.from_wav(path),
