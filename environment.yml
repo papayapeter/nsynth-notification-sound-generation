@@ -4,5 +4,7 @@ dependencies:
   - pip
   - yapf>=0.30
   - ipykernel>=6.9.1
+  - click=8.0
   - pip:
       - magenta==2.1.3
+      - pydub==0.25.1

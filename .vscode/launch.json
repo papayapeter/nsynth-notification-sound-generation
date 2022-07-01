@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "generate",
+            "type": "python",
+            "request": "launch",
+            "program": "generate_notifications.py",
+            "args": [
+                "--sample_rate=16000",
+                "--length=5",
+                "--batch_size=10",
+                "--executions=2",
+                "--in_dir=in/notifications",
+                "--out_dir=out",
+                "--deviation=0.9,1.1"
+            ],
+            "console": "integratedTerminal"
+        }
+    ]
+}
