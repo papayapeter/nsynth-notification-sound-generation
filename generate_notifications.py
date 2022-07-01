@@ -134,7 +134,7 @@ def generate(sample_rate: int, length: float, batch_size: int, executions: int,
             speed_change(AudioSegment.from_wav(path),
                          0.8).export(path.replace('wav', 'mp3'),
                                      format='mp3',
-                                     bitrate='56k')
+                                     parameters=['-q:a', '9'])
 
 
 if __name__ == '__main__':

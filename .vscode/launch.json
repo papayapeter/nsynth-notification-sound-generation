@@ -21,7 +21,7 @@
                 "--sample_rate=16000",
                 "--length=5",
                 "--batch_size=10",
-                "--executions=2",
+                "--executions=10",
                 "--in_dir=in/notifications",
                 "--out_dir=out",
                 "--deviation=0.9,1.1"
