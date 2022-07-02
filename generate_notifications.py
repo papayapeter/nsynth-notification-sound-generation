@@ -45,16 +45,18 @@ def parse_deviation(s: str) -> List[float]:
 
 # yapf: disable
 @click.command()
-@click.option('--sample_rate', type=int, default=16000, help='sample rate of the input audio files')
-@click.option('--length', type=float, default=5, help='length of the input audio files')
-@click.option('--batch_size', type=int, default=10, help='how many fused sounds to encode in one batch')
-@click.option('--executions', type=int, default=10, help='how many batches to process')
-@click.option('--in_dir', type=click.Path(exists=True, file_okay=False), help='directory where the input files are at')
-@click.option('--out_dir', type=click.Path(exists=False, file_okay=False), help='where to put the output files')
-@click.option('--deviation', type=parse_deviation, default=[0.9, 1.1], required=True, help='random deviation to vary the fused sounds')
+@click.option('--sample_rate', type=int, default=16000, help='sample rate of the input audio files', required=True)
+@click.option('--length', type=float, help='length of the input audio files', required=True)
+@click.option('--batch_size', type=int, default=10, help='how many fused sounds to encode in one batch', required=True)
+@click.option('--executions', type=int, default=10, help='how many batches to process', required=True)
+@click.option('--in_dir', type=click.Path(exists=True, file_okay=False), help='directory where the input files are at', required=True)
+@click.option('--out_dir', type=click.Path(exists=False, file_okay=False), help='where to put the output files', required=True)
+@click.option('--deviation', type=parse_deviation, default=[0.9, 1.1], help='random deviation to vary the fused sounds', required=True)
+@click.option('--pitch', type=click.FloatRange(0.1, 2.0), default=1.0, help='pitch change as fraction (1 leads no no change)')
 # yapf: enable
 def generate(sample_rate: int, length: float, batch_size: int, executions: int,
-             in_dir: str, out_dir: str, deviation: List[float]) -> None:
+             in_dir: str, out_dir: str, deviation: List[float],
+             pitch: float) -> None:
     sample_length = int(sample_rate * length)
 
     print('LOADING AUDIO')
@@ -118,7 +120,7 @@ def generate(sample_rate: int, length: float, batch_size: int, executions: int,
         # concat all fused encodings in numpy array for parallel processing
         fused_encodings = np.concatenate(fused_encodings_list, axis=0)
 
-        fused_encodings = timestretch(fused_encodings, 0.8)
+        fused_encodings = timestretch(fused_encodings, pitch)
 
         save_paths = [
             os.path.join(out_dir,
@@ -138,9 +140,9 @@ def generate(sample_rate: int, length: float, batch_size: int, executions: int,
         # reopen the wav files, stretch them & save them as mp3s
         for path in save_paths:
             speed_change(AudioSegment.from_wav(path),
-                         0.8).export(path.replace('wav', 'mp3'),
-                                     format='mp3',
-                                     parameters=['-q:a', '9'])
+                         pitch).export(path.replace('wav', 'mp3'),
+                                       format='mp3',
+                                       parameters=['-q:a', '9'])
 
 
 if __name__ == '__main__':
