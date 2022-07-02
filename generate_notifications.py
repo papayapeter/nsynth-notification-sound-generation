@@ -59,6 +59,10 @@ def generate(sample_rate: int, length: float, batch_size: int, executions: int,
              pitch: float) -> None:
     sample_length = int(sample_rate * length)
 
+    # generate directorties
+    os.makedirs(os.path.join(out_dir, 'wav'), exist_ok=True)
+    os.makedirs(os.path.join(out_dir, 'mp3'), exist_ok=True)
+
     print('LOADING AUDIO')
     # load audio files into numpy arrays
     audios = []
@@ -123,7 +127,7 @@ def generate(sample_rate: int, length: float, batch_size: int, executions: int,
         fused_encodings = timestretch(fused_encodings, pitch)
 
         save_paths = [
-            os.path.join(out_dir,
+            os.path.join(out_dir, 'wav',
                          f'fused_{execution_count * batch_size + i}.wav')
             for i in range(fused_encodings.shape[0])
         ]
